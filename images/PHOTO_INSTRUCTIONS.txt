@@ -1,0 +1,4 @@
+Add two different JPEG images:
+- home-profile.jpg: circular photo beside About Me on the homepage
+- about-page.jpg: large circular photo on the About Me page
+Upload both into the images/ folder of your GitHub repository.
