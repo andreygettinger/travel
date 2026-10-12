@@ -1,0 +1,2 @@
+Put your photos for Switzerland in this folder.
+Then open countries/switzerland.html in Notepad and add the image filenames to the const photos = [ ] list.

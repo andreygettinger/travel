@@ -1,0 +1,2 @@
+Put your photos for Denmark in this folder.
+Then open countries/denmark.html in Notepad and add the image filenames to the const photos = [ ] list.
