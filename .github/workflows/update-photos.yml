@@ -1,29 +1,46 @@
-name: Update photo galleries
+name: Build galleries (including HEIC) and deploy Pages
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'photos/**'
-      - '.github/workflows/update-photos.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  update:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Generate photo lists
-        run: python3 scripts/generate_galleries.py
-
-      - name: Commit updated lists
+      - name: Checkout website
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install HEIC converter
+        run: python -m pip install 'Pillow>=10,<12' 'pillow-heif>=0.18,<2'
+      - name: Prepare publish directory
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add galleries/
-          git diff --cached --quiet || git commit -m "Update photo galleries"
-          git push
+          mkdir -p _site
+          rsync -a --exclude='.git/' --exclude='.github/' --exclude='_site/' --exclude='*.zip' ./ _site/
+      - name: Convert HEIC and build every gallery index
+        run: python scripts/generate_galleries.py --root _site --convert-heic
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload built website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Publish website
+        id: deployment
+        uses: actions/deploy-pages@v4
