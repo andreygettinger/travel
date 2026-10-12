@@ -1,0 +1,2 @@
+Put your photos for United States in this folder.
+Then open countries/united-states.html in Notepad and add the image filenames to the const photos = [ ] list.
