@@ -1,0 +1,2 @@
+Put your photos for Georgia in this folder.
+Then open countries/georgia.html in Notepad and add the image filenames to the const photos = [ ] list.

@@ -1,0 +1,2 @@
+Put your photos for Estonia in this folder.
+Then open countries/estonia.html in Notepad and add the image filenames to the const photos = [ ] list.

@@ -1,0 +1,2 @@
+Put your photos for Hong Kong in this folder.
+Then open countries/hong-kong.html in Notepad and add the image filenames to the const photos = [ ] list.
