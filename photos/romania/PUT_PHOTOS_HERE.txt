@@ -1,0 +1,2 @@
+Put your photos for Romania in this folder.
+Then open countries/romania.html in Notepad and add the image filenames to the const photos = [ ] list.

@@ -1,0 +1,2 @@
+Put your photos for Ukraine in this folder.
+Then open countries/ukraine.html in Notepad and add the image filenames to the const photos = [ ] list.

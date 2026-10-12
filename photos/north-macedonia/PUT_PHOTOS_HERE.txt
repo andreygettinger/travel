@@ -1,0 +1,2 @@
+Put your photos for North Macedonia in this folder.
+Then open countries/north-macedonia.html in Notepad and add the image filenames to the const photos = [ ] list.

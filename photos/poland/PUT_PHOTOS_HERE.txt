@@ -1,0 +1,2 @@
+Put your photos for Poland in this folder.
+Then open countries/poland.html in Notepad and add the image filenames to the const photos = [ ] list.
