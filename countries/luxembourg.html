@@ -24,6 +24,14 @@ nav a{border-color:var(--page-border)}nav a:hover{background:var(--page-hover)}
 .gallery .photo-item,.gallery .photo-item.landscape,.gallery .photo-item.portrait,.gallery .photo-item.square{display:block;width:100%;break-inside:avoid;page-break-inside:avoid;margin:0 0 18px;overflow:hidden;}
 .gallery img{display:block;width:100%;height:auto;object-fit:contain;}
 @media(max-width:560px){.gallery{columns:1;}.gallery .photo-item{margin-bottom:12px;}}
+
+/* Wide, responsive photo gallery: natural aspect ratios, equal column widths. */
+main{max-width:none;width:100%;padding-left:clamp(18px,2.4vw,52px);padding-right:clamp(18px,2.4vw,52px)}
+.gallery{display:block;columns:2;column-gap:clamp(10px,1.2vw,22px);width:100%}
+.gallery .photo-item,.gallery .photo-item.landscape,.gallery .photo-item.portrait,.gallery .photo-item.square{display:block;width:100%;break-inside:avoid;margin-bottom:clamp(10px,1.2vw,22px)}
+.gallery img{width:100%;height:auto;display:block;object-fit:contain}
+@media(min-width:1800px){.gallery{columns:3}}
+@media(max-width:650px){.gallery{columns:1}}
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
 <div class="eyebrow">Travel photography / Luxembourg</div><h1>Luxembourg.</h1>
 <div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of Luxembourg with visited locations"></svg></div>

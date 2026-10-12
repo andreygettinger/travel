@@ -33,6 +33,19 @@
 /* Seamless map: no framed rectangle, ocean matches the page background. */
 .world-map{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}
 .world-map svg{background:transparent!important}
+
+/* Desktop homepage: keep the world map in the first viewport. */
+@media(min-width:901px){
+ .nav{height:clamp(48px,6vh,64px)}
+ .map-section{padding:clamp(12px,2vh,24px) 3.5vw clamp(8px,1.4vh,18px)}
+ .map-head{margin-bottom:clamp(8px,1.5vh,18px);gap:20px}
+ .map-head h2{font-size:clamp(30px,4vh,48px)}
+ .map-head p{font-size:13px;line-height:1.4}
+ .world-map{aspect-ratio:auto;height:min(65vh,calc(100vw * .50));max-height:680px}
+ .map-note{margin-top:7px;font-size:10px}
+ .country-panel{margin-top:10px;padding:12px 0}
+ .country-panel h3{font-size:24px}
+}
 </style>
 </head>
 <body>
