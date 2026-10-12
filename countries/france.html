@@ -3,10 +3,10 @@
 <script>
 // ADD YOUR PHOTO FILE NAMES HERE, between the quotes.
 // Example: const photos = ["photo-1.jpg", "photo-2.jpg", "sunset.jpg"];
-const photos = [
-  // "photo-1.jpg",
-  // "photo-2.jpg",
-];
+const country = "france";
+
+const response = await fetch(`../galleries/${country}.json`);
+const photos = await response.json();
 const gallery = document.getElementById("gallery");
 photos.forEach(filename => {
   const image = document.createElement("img");
