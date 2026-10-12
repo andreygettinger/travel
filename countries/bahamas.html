@@ -18,6 +18,12 @@ nav a{border-color:var(--page-border)}nav a:hover{background:var(--page-hover)}
 .gallery .photo-item.portrait{grid-column:span 1}
 .gallery img{display:block;width:100%;height:auto;object-fit:contain}
 @media(max-width:560px){.gallery{gap:10px}}
+
+/* Equal-width, natural-height photography columns. */
+.gallery{display:block;columns:2;column-gap:18px;}
+.gallery .photo-item,.gallery .photo-item.landscape,.gallery .photo-item.portrait,.gallery .photo-item.square{display:block;width:100%;break-inside:avoid;page-break-inside:avoid;margin:0 0 18px;overflow:hidden;}
+.gallery img{display:block;width:100%;height:auto;object-fit:contain;}
+@media(max-width:560px){.gallery{columns:1;}.gallery .photo-item{margin-bottom:12px;}}
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
 <div class="eyebrow">Travel photography / Bahamas</div><h1>Bahamas.</h1>
 <div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of Bahamas with visited locations"></svg></div>
