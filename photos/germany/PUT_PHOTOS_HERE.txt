@@ -1,0 +1,2 @@
+Put your photos for Germany in this folder.
+Then open countries/germany.html in Notepad and add the image filenames to the const photos = [ ] list.

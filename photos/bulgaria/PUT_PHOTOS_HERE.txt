@@ -1,0 +1,2 @@
+Put your photos for Bulgaria in this folder.
+Then open countries/bulgaria.html in Notepad and add the image filenames to the const photos = [ ] list.

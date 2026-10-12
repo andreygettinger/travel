@@ -1,0 +1,2 @@
+Put your photos for Belgium in this folder.
+Then open countries/belgium.html in Notepad and add the image filenames to the const photos = [ ] list.

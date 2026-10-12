@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Canada — Andrey Photography</title>
+<style>:root{color-scheme:light dark}body{background:#f5f3ef;color:#181714;font-family:Arial,sans-serif;margin:0}nav{padding:28px 6%;border-bottom:1px solid #ddd}a{color:inherit;text-decoration:none}nav a{font-size:14px}main{padding:8% 6%;min-height:65vh}h1{font:normal clamp(60px,11vw,140px) Georgia,serif;letter-spacing:-.06em;margin:0 0 20px}p{color:#706d67;line-height:1.7}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:55px}.gallery img{width:100%;height:auto;display:block}.empty{border-top:1px solid #ddd;padding-top:25px;max-width:600px}footer{padding:25px 6%;border-top:1px solid #ddd;color:#706d67;font-size:12px}</style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main><p>TRAVEL PHOTOGRAPHY / CANADA</p><h1>Canada.</h1><div class="empty"><p>Your photographs from Canada will live here.</p><p>To add photos, place image files in the <code>photos/canada/</code> folder and insert images in the gallery section of this HTML file, for example:</p><code>&lt;img src="../photos/canada/photo-1.jpg" alt="Canada travel photograph"&gt;</code></div><div class="gallery" id="gallery"></div>
+<script>
+// ADD YOUR PHOTO FILE NAMES HERE, between the quotes.
+// Example: const photos = ["photo-1.jpg", "photo-2.jpg", "sunset.jpg"];
+const photos = [
+  // "photo-1.jpg",
+  // "photo-2.jpg",
+];
+const gallery = document.getElementById("gallery");
+photos.forEach(filename => {
+  const image = document.createElement("img");
+  image.src = "../photos/canada/" + filename;
+  image.alt = "Canada — " + filename;
+  image.loading = "lazy";
+  gallery.appendChild(image);
+});
+</script></main><footer>© 2026 Andrey · Photography</footer></body></html>

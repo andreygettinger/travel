@@ -1,0 +1,2 @@
+Put your photos for Latvia in this folder.
+Then open countries/latvia.html in Notepad and add the image filenames to the const photos = [ ] list.

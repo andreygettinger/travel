@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>England — Andrey Photography</title><style>body{margin:0;background:#f5f3ef;color:#181714;font-family:Arial,sans-serif}nav,footer{padding:26px 6%;border-bottom:1px solid #ddd}a{color:inherit;text-decoration:none}main{padding:8% 6%;min-height:65vh}h1{font:normal clamp(60px,11vw,140px) Georgia,serif;letter-spacing:-.06em;margin:0 0 25px}p{color:#706d67;line-height:1.7}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:50px}.gallery img{width:100%}</style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main><p>TRAVEL PHOTOGRAPHY / ENGLAND</p><h1>England.</h1><p>Add photographs to <code>photos/england/</code> and place image tags below.</p><div class="gallery" id="gallery"></div>
+<script>
+// ADD YOUR PHOTO FILE NAMES HERE, between the quotes.
+// Example: const photos = ["photo-1.jpg", "photo-2.jpg", "sunset.jpg"];
+const photos = [
+  // "photo-1.jpg",
+  // "photo-2.jpg",
+];
+const gallery = document.getElementById("gallery");
+photos.forEach(filename => {
+  const image = document.createElement("img");
+  image.src = "../photos/england/" + filename;
+  image.alt = "England — " + filename;
+  image.loading = "lazy";
+  gallery.appendChild(image);
+});
+</script></main><footer>© 2026 Andrey · Photography</footer></body></html>

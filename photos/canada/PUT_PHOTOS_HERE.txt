@@ -1,0 +1,2 @@
+Put your photos for Canada in this folder.
+Then open countries/canada.html in Notepad and add the image filenames to the const photos = [ ] list.

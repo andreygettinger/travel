@@ -1,0 +1,2 @@
+Put your photos for Finland in this folder.
+Then open countries/finland.html in Notepad and add the image filenames to the const photos = [ ] list.

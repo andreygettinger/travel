@@ -1,0 +1,2 @@
+Put your photos for Bahamas in this folder.
+Then open countries/bahamas.html in Notepad and add the image filenames to the const photos = [ ] list.
