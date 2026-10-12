@@ -1,2 +1,0 @@
-Put your photos for England in this folder.
-Then open countries/england.html in Notepad and add the image filenames to the const photos = [ ] list.

@@ -1,2 +1,0 @@
-Put your photos for Hungary in this folder.
-Then open countries/hungary.html in Notepad and add the image filenames to the const photos = [ ] list.

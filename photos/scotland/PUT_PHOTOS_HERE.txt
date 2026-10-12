@@ -1,2 +1,0 @@
-Put your photos for Scotland in this folder.
-Then open countries/scotland.html in Notepad and add the image filenames to the const photos = [ ] list.

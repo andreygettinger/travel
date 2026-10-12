@@ -1,2 +1,0 @@
-Put your photos for Portugal in this folder.
-Then open countries/portugal.html in Notepad and add the image filenames to the const photos = [ ] list.

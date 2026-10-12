@@ -1,2 +1,0 @@
-Put your photos for Philippines in this folder.
-Then open countries/philippines.html in Notepad and add the image filenames to the const photos = [ ] list.

@@ -1,2 +1,0 @@
-Put your photos for Luxembourg in this folder.
-Then open countries/luxembourg.html in Notepad and add the image filenames to the const photos = [ ] list.

@@ -1,2 +1,0 @@
-Put your photos for Japan in this folder.
-Then open countries/japan.html in Notepad and add the image filenames to the const photos = [ ] list.

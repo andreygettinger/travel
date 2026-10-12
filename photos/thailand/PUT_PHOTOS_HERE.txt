@@ -1,2 +1,0 @@
-Put your photos for Thailand in this folder.
-Then open countries/thailand.html in Notepad and add the image filenames to the const photos = [ ] list.
