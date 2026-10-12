@@ -32,11 +32,17 @@ main{max-width:none;width:100%;padding-left:clamp(18px,2.4vw,52px);padding-right
 .gallery img{width:100%;height:auto;display:block;object-fit:contain}
 @media(min-width:1800px){.gallery{columns:3}}
 @media(max-width:650px){.gallery{columns:1}}
+
+/* Country gallery placeholder. */
+.gallery:has(.gallery-message){columns:1;display:block}
+.gallery-message{max-width:720px;margin:22px auto 45px;text-align:center;padding:clamp(32px,5vw,70px) 20px;border:1px solid var(--page-line);border-radius:16px;background:var(--page-bg)}
+.gallery-message h3{font:normal clamp(26px,3vw,38px) Georgia,serif;margin:0 0 14px;color:var(--page-text)}
+.gallery-message p{font-size:clamp(15px,1.4vw,18px);margin:0 auto;max-width:520px;line-height:1.7}
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
 <div class="eyebrow">Travel photography / Russia</div><h1>Russia.</h1>
 <div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of Russia with visited locations"></svg></div>
 <p class="hint" id="mapStatus">Add your visited cities and places as stars on this map.</p>
-<h2 class="gallery-title">Photographs</h2><div class="gallery" id="gallery"></div>
+<h2 class="gallery-title">Photographs</h2><div class="gallery" id="gallery"><section class="gallery-message" aria-label="Photography update"><h3>No photos yet.</h3><p>Sorry, there are no photographs to share from this destination just yet.</p></section></div>
 <script type="module">
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 import * as topojson from 'https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm';
@@ -119,7 +125,8 @@ async function loadGallery() {
     console.warn('Gallery error:', error);
   }
 }
-loadGallery();
+// Gallery intentionally shows a country-specific message until photos are published.
+// loadGallery();
 
 const svg = d3.select('#countryMap');
 try {
