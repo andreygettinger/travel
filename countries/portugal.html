@@ -1,18 +1,153 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portugal — Andrey Photography</title>
-<style>:root{color-scheme:light dark}body{background:#f5f3ef;color:#181714;font-family:Arial,sans-serif;margin:0}nav{padding:28px 6%;border-bottom:1px solid #ddd}a{color:inherit;text-decoration:none}nav a{font-size:14px}main{padding:8% 6%;min-height:65vh}h1{font:normal clamp(60px,11vw,140px) Georgia,serif;letter-spacing:-.06em;margin:0 0 20px}p{color:#706d67;line-height:1.7}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:55px}.gallery img{width:100%;height:auto;display:block}.empty{border-top:1px solid #ddd;padding-top:25px;max-width:600px}footer{padding:25px 6%;border-top:1px solid #ddd;color:#706d67;font-size:12px}</style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main><p>TRAVEL PHOTOGRAPHY / PORTUGAL</p><h1>Portugal.</h1><div class="empty"><p>Your photographs from Portugal will live here.</p><p>To add photos, place image files in the <code>photos/portugal/</code> folder and insert images in the gallery section of this HTML file, for example:</p><code>&lt;img src="../photos/portugal/photo-1.jpg" alt="Portugal travel photograph"&gt;</code></div><div class="gallery" id="gallery"></div>
-<script>
-// ADD YOUR PHOTO FILE NAMES HERE, between the quotes.
-// Example: const photos = ["photo-1.jpg", "photo-2.jpg", "sunset.jpg"];
-const photos = [
-  // "photo-1.jpg",
-  // "photo-2.jpg",
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portugal — Andrey Photography</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#f5f3ef;color:#181714;font-family:Arial,Helvetica,sans-serif}a{color:inherit;text-decoration:none}nav{padding:25px 6%;border-bottom:1px solid #dedbd4}nav a{font-size:18px;font-weight:600;display:inline-flex;align-items:center;padding:12px 18px;border:1px solid #c9c6bd;border-radius:9px;transition:background .2s}nav a:hover{background:#e7e9df}main{max-width:1440px;margin:auto;padding:65px 6% 95px}h1{font:normal clamp(62px,11vw,135px) Georgia,serif;letter-spacing:-.06em;margin:0 0 18px}.eyebrow{font-size:12px;letter-spacing:.16em;color:#777168;text-transform:uppercase}p{color:#777168;line-height:1.6}.map-wrap{margin:38px auto 8px;position:relative;max-width:1050px}.map-wrap svg{width:100%;height:auto;display:block;overflow:visible}.outline{fill:#607a68;stroke:#395343;stroke-width:1.25;vector-effect:non-scaling-stroke}.star{fill:#f4d57c;stroke:#273f31;stroke-width:1.5;vector-effect:non-scaling-stroke;cursor:pointer;filter:drop-shadow(0 1px 2px #0005)}.star:hover,.star:focus{fill:#fff3b3;stroke-width:2.5;filter:drop-shadow(0 2px 5px #0008)}.star-label{font-size:13px;font-weight:600;fill:#292821;paint-order:stroke;stroke:#f5f3ef;stroke-width:4px;stroke-linejoin:round;pointer-events:none}.hint{font-size:13px;margin:0 0 50px}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:25px}.gallery img{width:100%;height:auto;display:block}.gallery-title{font:normal 34px Georgia,serif;margin-top:70px}.status{font-size:13px}footer{border-top:1px solid #dedbd4;padding:25px 6%;font-size:12px;color:#777168}
+
+/* Match the world map's automatic light/dark appearance. */
+:root{color-scheme:light dark;--page-bg:light-dark(#f5f3ef,#11110f);--page-text:light-dark(#181714,#f4f1eb);--page-muted:light-dark(#777168,#aaa59d);--page-line:light-dark(#dedbd4,#302e2a);--page-hover:light-dark(#e7e9df,#242923);--page-border:light-dark(#c9c6bd,#575d55);--map-green:light-dark(#607a68,#789784);--map-stroke:light-dark(#395343,#a3b5a6);--star-label:light-dark(#292821,#f4f1eb)}
+body{background:var(--page-bg);color:var(--page-text)}
+nav,footer{border-color:var(--page-line)}
+nav a{border-color:var(--page-border)}nav a:hover{background:var(--page-hover)}
+.eyebrow,p,footer{color:var(--page-muted)}
+.outline{fill:var(--map-green);stroke:var(--map-stroke)}
+.star-label{fill:var(--star-label);stroke:var(--page-bg)}
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start;margin-top:25px}
+.gallery .photo-item{margin:0;min-width:0;overflow:hidden}
+.gallery .photo-item.landscape,.gallery .photo-item.square{grid-column:1/-1}
+.gallery .photo-item.portrait{grid-column:span 1}
+.gallery img{display:block;width:100%;height:auto;object-fit:contain}
+@media(max-width:560px){.gallery{gap:10px}}
+</style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
+<div class="eyebrow">Travel photography / Portugal</div><h1>Portugal.</h1>
+<div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of Portugal with visited locations"></svg></div>
+<p class="hint" id="mapStatus">Add your visited cities and places as stars on this map.</p>
+<h2 class="gallery-title">Photographs</h2><div class="gallery" id="gallery"></div>
+<script type="module">
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
+import * as topojson from 'https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm';
+
+// ADD YOUR VISITED PLACES HERE. Each needs a name, latitude and longitude.
+// Example: { name: "Lima", lat: -12.0464, lon: -77.0428 },
+const places = [
+  {
+    "name": "Silves",
+    "lat": 37.1892,
+    "lon": -8.4382,
+    "url": "https://www.google.com/maps/place/Silves/data=!4m2!3m1!1s0xd1ad9f2734cb747:0xcee220935f11a5a6"
+  },
+  {
+    "name": "Sintra-Cascais Natural Park",
+    "lat": 38.788,
+    "lon": -9.463,
+    "url": "https://www.google.com/maps/place/Sintra-Cascais+Natural+Park/data=!4m2!3m1!1s0xd1ecff76f7375cf:0xbc22642bd450f5fe"
+  },
+  {
+    "name": "Sintra",
+    "lat": 38.8029,
+    "lon": -9.3817,
+    "url": "https://www.google.com/maps/place/Sintra/data=!4m2!3m1!1s0xd1edac1a7510ee9:0x13585cc0b00f573c"
+  },
+  {
+    "name": "Angra do Heroísmo",
+    "lat": 38.6553,
+    "lon": -27.2173,
+    "url": "https://www.google.com/maps/place/Angra+do+Hero%C3%ADsmo/data=!4m2!3m1!1s0xb467f1e11e43b05:0xc6f2d9b9f5a30606"
+  },
+  {
+    "name": "Óbidos",
+    "lat": 39.36,
+    "lon": -9.1574,
+    "url": "https://www.google.com/maps/place/%C3%93bidos/data=!4m2!3m1!1s0xd18b49eef1edec5:0x170a628ab34d3bb3"
+  },
+  {
+    "name": "Colares",
+    "lat": 38.802,
+    "lon": -9.446,
+    "url": "https://www.google.com/maps/place/Colares/data=!4m2!3m1!1s0xd1edb64362d1229:0x1bc6a95daab6f276"
+  },
+  {
+    "name": "Armação de Pêra",
+    "lat": 37.1026,
+    "lon": -8.3572,
+    "url": "https://www.google.com/maps/place/Arma%C3%A7%C3%A3o+de+P%C3%AAra/data=!4m2!3m1!1s0xd1ad1716a7584fb:0xe26c68543f000e37"
+  },
+  {
+    "name": "Aljezur",
+    "lat": 37.3191,
+    "lon": -8.8033,
+    "url": "https://www.google.com/maps/place/Aljezur/data=!4m2!3m1!1s0xd1b1553a00984c3:0x1078737f37c30fc6"
+  },
+  {
+    "name": "Lisbon",
+    "lat": 38.7223,
+    "lon": -9.1393,
+    "url": "https://www.google.com/maps/place/Lisbon/data=!4m2!3m1!1s0xd19331a61e4f33b:0x400ebbde49036d0"
+  },
+  {
+    "name": "Porto",
+    "lat": 41.1579,
+    "lon": -8.6291,
+    "url": "https://www.google.com/maps/place/Porto/data=!4m2!3m1!1s0xd2465abc4e153c1:0xa648d95640b114bc"
+  }
 ];
-const gallery = document.getElementById("gallery");
-photos.forEach(filename => {
-  const image = document.createElement("img");
-  image.src = "../photos/portugal/" + filename;
-  image.alt = "Portugal — " + filename;
-  image.loading = "lazy";
-  gallery.appendChild(image);
-});
+
+// Photo lists are generated automatically by GitHub Actions from photos/portugal/.
+// No filenames need to be entered in this HTML file.
+const gallery = document.getElementById('gallery');
+async function loadGallery() {
+  try {
+    const response = await fetch('../galleries/portugal.json', {cache:'no-cache'});
+    if (!response.ok) throw new Error('Photo list unavailable');
+    const photos = await response.json();
+    if (!Array.isArray(photos)) throw new Error('Invalid photo list');
+    for (const filename of photos) {
+      const img = document.createElement('img');
+      img.src = '../photos/portugal/' + filename.split('/').map(encodeURIComponent).join('/');
+      img.alt = 'Portugal — ' + filename;
+      img.loading = 'lazy';
+      const item = document.createElement('figure');
+      item.className = 'photo-item';
+      img.addEventListener('load', () => {
+        const ratio = img.naturalWidth / img.naturalHeight;
+        item.classList.remove('landscape', 'portrait', 'square');
+        item.classList.add(ratio > 1.05 ? 'landscape' : ratio < 0.95 ? 'portrait' : 'square');
+      });
+      item.appendChild(img);
+      gallery.appendChild(item);
+    }
+  } catch (error) {
+    const note = document.createElement('p');
+    note.textContent = 'Photos are temporarily unavailable. The gallery index may still be generating.';
+    gallery.appendChild(note);
+    console.warn('Gallery error:', error);
+  }
+}
+loadGallery();
+
+const svg = d3.select('#countryMap');
+try {
+  const response = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json');
+  if (!response.ok) throw new Error('Could not load map');
+  const atlas = await response.json();
+  const countries = topojson.feature(atlas,atlas.objects.countries).features;
+  const feature = countries.find(f => String(f.id).padStart(3,'0') === '620');
+  if (!feature) throw new Error('Country outline not found in map data');
+  const projection = d3.geoMercator().fitExtent([[65,35],[835,555]],feature);
+  const path = d3.geoPath(projection);
+  svg.append('path').datum(feature).attr('class','outline').attr('d',path);
+  const symbols = svg.append('g');
+  places.forEach(place => {
+    const point = projection([place.lon,place.lat]);
+    if (!point || !Number.isFinite(point[0]) || !Number.isFinite(point[1])) return;
+    const group=symbols.append('g').attr('transform',`translate(${point[0]},${point[1]})`);
+    const star=group.append('path').attr('class','star').attr('d',d3.symbol().type(d3.symbolStar).size(115)()).attr('tabindex',0).attr('role','img').attr('aria-label',place.name);
+    star.append('title').text(place.name);
+    if (place.url) { star.style('cursor','pointer').on('click',()=>window.open(place.url,'_blank','noopener,noreferrer')); }
+    // Place name appears on hover via the star tooltip.
+  });
+  document.getElementById('mapStatus').textContent=places.length ? `${places.length} visited ${places.length===1?'place':'places'} · Hover over a star to see its name.` : 'Your map is ready. Add cities or places to the “places” list in this country’s HTML file.';
+} catch(error) {
+  document.getElementById('mapStatus').textContent='The map needs an internet connection to load. '+error.message;
+}
 </script></main><footer>© 2026 Andrey · Photography</footer></body></html>

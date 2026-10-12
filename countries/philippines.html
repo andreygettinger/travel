@@ -1,18 +1,123 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Philippines — Andrey Photography</title>
-<style>:root{color-scheme:light dark}body{background:#f5f3ef;color:#181714;font-family:Arial,sans-serif;margin:0}nav{padding:28px 6%;border-bottom:1px solid #ddd}a{color:inherit;text-decoration:none}nav a{font-size:14px}main{padding:8% 6%;min-height:65vh}h1{font:normal clamp(60px,11vw,140px) Georgia,serif;letter-spacing:-.06em;margin:0 0 20px}p{color:#706d67;line-height:1.7}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:55px}.gallery img{width:100%;height:auto;display:block}.empty{border-top:1px solid #ddd;padding-top:25px;max-width:600px}footer{padding:25px 6%;border-top:1px solid #ddd;color:#706d67;font-size:12px}</style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main><p>TRAVEL PHOTOGRAPHY / PHILIPPINES</p><h1>Philippines.</h1><div class="empty"><p>Your photographs from Philippines will live here.</p><p>To add photos, place image files in the <code>photos/philippines/</code> folder and insert images in the gallery section of this HTML file, for example:</p><code>&lt;img src="../photos/philippines/photo-1.jpg" alt="Philippines travel photograph"&gt;</code></div><div class="gallery" id="gallery"></div>
-<script>
-// ADD YOUR PHOTO FILE NAMES HERE, between the quotes.
-// Example: const photos = ["photo-1.jpg", "photo-2.jpg", "sunset.jpg"];
-const photos = [
-  // "photo-1.jpg",
-  // "photo-2.jpg",
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Philippines — Andrey Photography</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#f5f3ef;color:#181714;font-family:Arial,Helvetica,sans-serif}a{color:inherit;text-decoration:none}nav{padding:25px 6%;border-bottom:1px solid #dedbd4}nav a{font-size:18px;font-weight:600;display:inline-flex;align-items:center;padding:12px 18px;border:1px solid #c9c6bd;border-radius:9px;transition:background .2s}nav a:hover{background:#e7e9df}main{max-width:1440px;margin:auto;padding:65px 6% 95px}h1{font:normal clamp(62px,11vw,135px) Georgia,serif;letter-spacing:-.06em;margin:0 0 18px}.eyebrow{font-size:12px;letter-spacing:.16em;color:#777168;text-transform:uppercase}p{color:#777168;line-height:1.6}.map-wrap{margin:38px auto 8px;position:relative;max-width:1050px}.map-wrap svg{width:100%;height:auto;display:block;overflow:visible}.outline{fill:#607a68;stroke:#395343;stroke-width:1.25;vector-effect:non-scaling-stroke}.star{fill:#f4d57c;stroke:#273f31;stroke-width:1.5;vector-effect:non-scaling-stroke;cursor:pointer;filter:drop-shadow(0 1px 2px #0005)}.star:hover,.star:focus{fill:#fff3b3;stroke-width:2.5;filter:drop-shadow(0 2px 5px #0008)}.star-label{font-size:13px;font-weight:600;fill:#292821;paint-order:stroke;stroke:#f5f3ef;stroke-width:4px;stroke-linejoin:round;pointer-events:none}.hint{font-size:13px;margin:0 0 50px}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:25px}.gallery img{width:100%;height:auto;display:block}.gallery-title{font:normal 34px Georgia,serif;margin-top:70px}.status{font-size:13px}footer{border-top:1px solid #dedbd4;padding:25px 6%;font-size:12px;color:#777168}
+
+/* Match the world map's automatic light/dark appearance. */
+:root{color-scheme:light dark;--page-bg:light-dark(#f5f3ef,#11110f);--page-text:light-dark(#181714,#f4f1eb);--page-muted:light-dark(#777168,#aaa59d);--page-line:light-dark(#dedbd4,#302e2a);--page-hover:light-dark(#e7e9df,#242923);--page-border:light-dark(#c9c6bd,#575d55);--map-green:light-dark(#607a68,#789784);--map-stroke:light-dark(#395343,#a3b5a6);--star-label:light-dark(#292821,#f4f1eb)}
+body{background:var(--page-bg);color:var(--page-text)}
+nav,footer{border-color:var(--page-line)}
+nav a{border-color:var(--page-border)}nav a:hover{background:var(--page-hover)}
+.eyebrow,p,footer{color:var(--page-muted)}
+.outline{fill:var(--map-green);stroke:var(--map-stroke)}
+.star-label{fill:var(--star-label);stroke:var(--page-bg)}
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start;margin-top:25px}
+.gallery .photo-item{margin:0;min-width:0;overflow:hidden}
+.gallery .photo-item.landscape,.gallery .photo-item.square{grid-column:1/-1}
+.gallery .photo-item.portrait{grid-column:span 1}
+.gallery img{display:block;width:100%;height:auto;object-fit:contain}
+@media(max-width:560px){.gallery{gap:10px}}
+</style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
+<div class="eyebrow">Travel photography / Philippines</div><h1>Philippines.</h1>
+<div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of Philippines with visited locations"></svg></div>
+<p class="hint" id="mapStatus">Add your visited cities and places as stars on this map.</p>
+<h2 class="gallery-title">Photographs</h2><div class="gallery" id="gallery"></div>
+<script type="module">
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
+import * as topojson from 'https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm';
+
+// ADD YOUR VISITED PLACES HERE. Each needs a name, latitude and longitude.
+// Example: { name: "Lima", lat: -12.0464, lon: -77.0428 },
+const places = [
+  {
+    "name": "Virac",
+    "lat": 13.5848,
+    "lon": 124.2374,
+    "url": "https://www.google.com/maps/place/Virac/data=!4m2!3m1!1s0x33a016eeac5ea777:0x96603dac8400b349"
+  },
+  {
+    "name": "Legazpi City",
+    "lat": 13.1391,
+    "lon": 123.7438,
+    "url": "https://www.google.com/maps/place/Legazpi+City/data=!4m2!3m1!1s0x33a101687e9bf8a7:0x305252e78d14537a"
+  },
+  {
+    "name": "Bulakan",
+    "lat": 14.7537,
+    "lon": 120.9531,
+    "url": "https://www.google.com/maps/place/Bulakan/data=!4m2!3m1!1s0x33964d16f1fd52fb:0x86bd978533995ead"
+  },
+  {
+    "name": "Tagaytay",
+    "lat": 14.1153,
+    "lon": 120.9621,
+    "url": "https://www.google.com/maps/place/Tagaytay/data=!4m2!3m1!1s0x33bd777b1ab54c8f:0x6ecc514451ce2be8"
+  },
+  {
+    "name": "Manila",
+    "lat": 14.5995,
+    "lon": 120.9842,
+    "url": "https://www.google.com/maps/place/Manila/data=!4m2!3m1!1s0x3397ca03571ec38b:0x69d1d5751069c11f"
+  }
 ];
-const gallery = document.getElementById("gallery");
-photos.forEach(filename => {
-  const image = document.createElement("img");
-  image.src = "../photos/philippines/" + filename;
-  image.alt = "Philippines — " + filename;
-  image.loading = "lazy";
-  gallery.appendChild(image);
-});
+
+// Photo lists are generated automatically by GitHub Actions from photos/philippines/.
+// No filenames need to be entered in this HTML file.
+const gallery = document.getElementById('gallery');
+async function loadGallery() {
+  try {
+    const response = await fetch('../galleries/philippines.json', {cache:'no-cache'});
+    if (!response.ok) throw new Error('Photo list unavailable');
+    const photos = await response.json();
+    if (!Array.isArray(photos)) throw new Error('Invalid photo list');
+    for (const filename of photos) {
+      const img = document.createElement('img');
+      img.src = '../photos/philippines/' + filename.split('/').map(encodeURIComponent).join('/');
+      img.alt = 'Philippines — ' + filename;
+      img.loading = 'lazy';
+      const item = document.createElement('figure');
+      item.className = 'photo-item';
+      img.addEventListener('load', () => {
+        const ratio = img.naturalWidth / img.naturalHeight;
+        item.classList.remove('landscape', 'portrait', 'square');
+        item.classList.add(ratio > 1.05 ? 'landscape' : ratio < 0.95 ? 'portrait' : 'square');
+      });
+      item.appendChild(img);
+      gallery.appendChild(item);
+    }
+  } catch (error) {
+    const note = document.createElement('p');
+    note.textContent = 'Photos are temporarily unavailable. The gallery index may still be generating.';
+    gallery.appendChild(note);
+    console.warn('Gallery error:', error);
+  }
+}
+loadGallery();
+
+const svg = d3.select('#countryMap');
+try {
+  const response = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json');
+  if (!response.ok) throw new Error('Could not load map');
+  const atlas = await response.json();
+  const countries = topojson.feature(atlas,atlas.objects.countries).features;
+  const feature = countries.find(f => String(f.id).padStart(3,'0') === '608');
+  if (!feature) throw new Error('Country outline not found in map data');
+  const projection = d3.geoMercator().fitExtent([[65,35],[835,555]],feature);
+  const path = d3.geoPath(projection);
+  svg.append('path').datum(feature).attr('class','outline').attr('d',path);
+  const symbols = svg.append('g');
+  places.forEach(place => {
+    const point = projection([place.lon,place.lat]);
+    if (!point || !Number.isFinite(point[0]) || !Number.isFinite(point[1])) return;
+    const group=symbols.append('g').attr('transform',`translate(${point[0]},${point[1]})`);
+    const star=group.append('path').attr('class','star').attr('d',d3.symbol().type(d3.symbolStar).size(115)()).attr('tabindex',0).attr('role','img').attr('aria-label',place.name);
+    star.append('title').text(place.name);
+    if (place.url) { star.style('cursor','pointer').on('click',()=>window.open(place.url,'_blank','noopener,noreferrer')); }
+    // Place name appears on hover via the star tooltip.
+  });
+  document.getElementById('mapStatus').textContent=places.length ? `${places.length} visited ${places.length===1?'place':'places'} · Hover over a star to see its name.` : 'Your map is ready. Add cities or places to the “places” list in this country’s HTML file.';
+} catch(error) {
+  document.getElementById('mapStatus').textContent='The map needs an internet connection to load. '+error.message;
+}
 </script></main><footer>© 2026 Andrey · Photography</footer></body></html>

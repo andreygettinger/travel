@@ -1,17 +1,53 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>England — Andrey Photography</title><style>body{margin:0;background:#f5f3ef;color:#181714;font-family:Arial,sans-serif}nav,footer{padding:26px 6%;border-bottom:1px solid #ddd}a{color:inherit;text-decoration:none}main{padding:8% 6%;min-height:65vh}h1{font:normal clamp(60px,11vw,140px) Georgia,serif;letter-spacing:-.06em;margin:0 0 25px}p{color:#706d67;line-height:1.7}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:50px}.gallery img{width:100%}</style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main><p>TRAVEL PHOTOGRAPHY / ENGLAND</p><h1>England.</h1><p>Add photographs to <code>photos/england/</code> and place image tags below.</p><div class="gallery" id="gallery"></div>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>England — Andrey Photography</title><style>body{margin:0;background:#f5f3ef;color:#181714;font-family:Arial,sans-serif}nav,footer{padding:26px 6%;border-bottom:1px solid #ddd}a{color:inherit;text-decoration:none}main{padding:8% 6%;min-height:65vh}h1{font:normal clamp(60px,11vw,140px) Georgia,serif;letter-spacing:-.06em;margin:0 0 25px}p{color:#706d67;line-height:1.7}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:50px}.gallery img{width:100%}
+/* Match the world map's automatic light/dark appearance. */
+:root{color-scheme:light dark;--page-bg:light-dark(#f5f3ef,#11110f);--page-text:light-dark(#181714,#f4f1eb);--page-muted:light-dark(#777168,#aaa59d);--page-line:light-dark(#dedbd4,#302e2a);--page-hover:light-dark(#e7e9df,#242923);--page-border:light-dark(#c9c6bd,#575d55);--map-green:light-dark(#607a68,#789784);--map-stroke:light-dark(#395343,#a3b5a6);--star-label:light-dark(#292821,#f4f1eb)}
+body{background:var(--page-bg);color:var(--page-text)}
+nav,footer{border-color:var(--page-line)}
+nav a{border-color:var(--page-border)}nav a:hover{background:var(--page-hover)}
+.eyebrow,p,footer{color:var(--page-muted)}
+.outline{fill:var(--map-green);stroke:var(--map-stroke)}
+.star-label{fill:var(--star-label);stroke:var(--page-bg)}
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start;margin-top:25px}
+.gallery .photo-item{margin:0;min-width:0;overflow:hidden}
+.gallery .photo-item.landscape,.gallery .photo-item.square{grid-column:1/-1}
+.gallery .photo-item.portrait{grid-column:span 1}
+.gallery img{display:block;width:100%;height:auto;object-fit:contain}
+@media(max-width:560px){.gallery{gap:10px}}
+</style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main><p>TRAVEL PHOTOGRAPHY / ENGLAND</p><h1>England.</h1><p>Add photographs to <code>photos/england/</code> and place image tags below.</p><div class="gallery" id="gallery"></div>
 <script>
 // ADD YOUR PHOTO FILE NAMES HERE, between the quotes.
-// Example: const photos = ["photo-1.jpg", "photo-2.jpg", "sunset.jpg"];
-const photos = [
-  // "photo-1.jpg",
-  // "photo-2.jpg",
-];
-const gallery = document.getElementById("gallery");
-photos.forEach(filename => {
-  const image = document.createElement("img");
-  image.src = "../photos/england/" + filename;
-  image.alt = "England — " + filename;
-  image.loading = "lazy";
-  gallery.appendChild(image);
-});
+// Example: // Photo lists are generated automatically by GitHub Actions from photos/england/.
+// No filenames need to be entered in this HTML file.
+const gallery = document.getElementById('gallery');
+async function loadGallery() {
+  try {
+    const response = await fetch('../galleries/england.json', {cache:'no-cache'});
+    if (!response.ok) throw new Error('Photo list unavailable');
+    const photos = await response.json();
+    if (!Array.isArray(photos)) throw new Error('Invalid photo list');
+    for (const filename of photos) {
+      const img = document.createElement('img');
+      img.src = '../photos/england/' + filename.split('/').map(encodeURIComponent).join('/');
+      img.alt = 'England — ' + filename;
+      img.loading = 'lazy';
+      const item = document.createElement('figure');
+      item.className = 'photo-item';
+      img.addEventListener('load', () => {
+        const ratio = img.naturalWidth / img.naturalHeight;
+        item.classList.remove('landscape', 'portrait', 'square');
+        item.classList.add(ratio > 1.05 ? 'landscape' : ratio < 0.95 ? 'portrait' : 'square');
+      });
+      item.appendChild(img);
+      gallery.appendChild(item);
+    }
+  } catch (error) {
+    const note = document.createElement('p');
+    note.textContent = 'Photos are temporarily unavailable. The gallery index may still be generating.';
+    gallery.appendChild(note);
+    console.warn('Gallery error:', error);
+  }
+}
+loadGallery();
+
+
 </script></main><footer>© 2026 Andrey · Photography</footer></body></html>

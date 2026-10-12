@@ -1,0 +1,1 @@
+Place photos here, then run update_photo_galleries.py
