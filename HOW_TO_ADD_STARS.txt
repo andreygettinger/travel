@@ -1,0 +1,15 @@
+HOW TO ADD STARS TO COUNTRY MAPS
+
+1. Open countries/peru.html in Notepad or VS Code.
+2. Find the line: const places = [
+3. Add one line for each location:
+   { name: "Lima", lat: -12.0464, lon: -77.0428 },
+   { name: "Cusco", lat: -13.5319, lon: -71.9675 },
+   { name: "Machu Picchu", lat: -13.1631, lon: -72.5450 },
+4. Save. Refresh the page in Chrome.
+5. Repeat for other countries. Google Maps can provide coordinates: right-click a location and copy its latitude/longitude.
+
+Your existing photo folders remain under photos/<country>/. The world map is index.html.
+Internet access is required for the map boundaries.
+
+MAP NOTES: France shows mainland France only. United States shows the 48 contiguous states with state borders (no Alaska or Hawaii).

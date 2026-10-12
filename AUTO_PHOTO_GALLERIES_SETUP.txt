@@ -1,0 +1,15 @@
+AUTOMATIC PHOTO GALLERIES — ONE-TIME SETUP
+
+1. Extract this ZIP. Upload ALL files and folders INSIDE andrey_photography_site/ to the ROOT of your GitHub repository, including the hidden .github folder, scripts/ and galleries/.
+   IMPORTANT: Windows File Explorer may hide the .github folder; enable View > Show > Hidden items. GitHub web uploads may not preserve nested directories reliably; using GitHub Desktop or git is easiest.
+2. On GitHub open Settings > Pages > Build and deployment > Source and select "GitHub Actions" (not "Deploy from a branch"). Save.
+3. Open Settings > Actions > General > Workflow permissions and enable "Read and write permissions" if available; save. Some organizations restrict this setting.
+4. Go to the Actions tab, choose "Update galleries and publish website" and click "Run workflow" once. Wait until it succeeds.
+5. Going forward, upload images into photos/france/, photos/japan/, etc., and commit to main. The workflow will regenerate galleries/*.json and deploy the website automatically.
+
+Images supported: jpg, jpeg, png, webp, gif, avif (including nested subfolders).
+No need to add photo names to any country HTML page.
+Landscape images span one full row; portrait images are displayed two per row.
+The first run is necessary because a GitHub workflow added via the web UI might not run immediately.
+If your site is a project repository, GitHub Pages handles the repository path automatically.
+For a preview on your computer, use a local HTTP server (e.g. python -m http.server), not file://, because fetch() of JSON files is restricted by browsers.
