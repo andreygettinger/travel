@@ -41,6 +41,20 @@ main{max-width:none;width:100%;padding-left:clamp(18px,2.4vw,52px);padding-right
 .map-wrap .atlas-callout-text{fill:#f0e9dc;stroke:none;font:15px Georgia,serif;letter-spacing:.08px;cursor:pointer}
 .map-wrap .atlas-callout a:hover .atlas-callout-text{fill:#ffd98c;text-decoration:underline}
 .map-wrap .star{fill:#eec576;stroke:#273f31}
+
+/* Spain-style transparent, close-fitting gold leader labels */
+
+/* The map itself has no background: your site's page color shows through. */
+.map-wrap{max-width:1350px;margin-top:20px}
+#countryMap{background:transparent;overflow:visible}
+.outline{fill:var(--map-green);stroke:var(--map-stroke);stroke-width:1.15;vector-effect:non-scaling-stroke}
+.atlas-name{fill:var(--page-text);font:15px Georgia,serif;letter-spacing:.01em;cursor:pointer}
+.atlas-line{fill:none;stroke:#c39b52;stroke-width:1.05;stroke-linecap:round;stroke-linejoin:round;opacity:.8;pointer-events:none;vector-effect:non-scaling-stroke}
+.atlas-star{fill:#f0ca75;stroke:#493a22;stroke-width:1;cursor:pointer;filter:drop-shadow(0 1px 2px #0005)}
+#annotations a:hover .atlas-name{fill:#c39b52}
+#annotations a:hover .atlas-star{fill:#fff0b1}
+@media(max-width:650px){.map-wrap{width:110%;margin-left:-5%}}
+
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
 <div class="eyebrow">Travel photography / United Kingdom</div><h1>United Kingdom.</h1>
 <div class="map-wrap"><svg id="countryMap" viewBox="0 0 1200 780" role="img" aria-label="Map of United Kingdom with visited locations"></svg></div>
