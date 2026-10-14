@@ -19,6 +19,14 @@ nav a{border-color:var(--page-border)}nav a:hover{background:var(--page-hover)}
 .gallery .photo-item,.gallery .photo-item.landscape,.gallery .photo-item.portrait,.gallery .photo-item.square{display:block;width:100%;break-inside:avoid;page-break-inside:avoid;margin:0 0 18px;overflow:hidden;}
 .gallery img{display:block;width:100%;height:auto;object-fit:contain;}
 @media(max-width:560px){.gallery{columns:1;}.gallery .photo-item{margin-bottom:12px;}}
+
+/* Full-width, three-column photo gallery (natural photo proportions). */
+main { max-width:none; width:100%; padding-left:clamp(12px,2vw,36px); padding-right:clamp(12px,2vw,36px); }
+.gallery { display:block !important; columns:3 !important; column-gap:clamp(8px,1vw,18px) !important; width:100%; margin-top:25px; }
+.gallery .photo-item, .gallery .photo-item.landscape, .gallery .photo-item.portrait, .gallery .photo-item.square { display:block !important; width:100% !important; break-inside:avoid; page-break-inside:avoid; margin:0 0 clamp(8px,1vw,18px) !important; overflow:hidden; }
+.gallery img { display:block; width:100%; height:auto; object-fit:contain; cursor:zoom-in; }
+@media (max-width:800px) { .gallery { columns:2 !important; } }
+@media (max-width:520px) { .gallery { columns:1 !important; } }
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main><p>TRAVEL PHOTOGRAPHY / WALES</p><h1>Wales.</h1><p>Add photographs to <code>photos/wales/</code> and place image tags below.</p><div class="gallery" id="gallery"></div>
 <script>
 // ADD YOUR PHOTO FILE NAMES HERE, between the quotes.
@@ -56,4 +64,4 @@ async function loadGallery() {
 loadGallery();
 
 
-</script></main><footer>© 2026 Andrey · Photography</footer></body></html>
+</script></main><footer>© 2026 Andrey · Photography</footer><script src="../lightbox.js" defer></script></body></html>
