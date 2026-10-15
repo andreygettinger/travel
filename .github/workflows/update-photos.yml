@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir -p _site
           rsync -a --exclude='.git/' --exclude='.github/' --exclude='_site/' --exclude='*.zip' ./ _site/
-      - name: Convert HEIC and build every gallery index
+      - name: Compress photos, convert HEIC and build gallery indexes
         run: python scripts/generate_galleries.py --root _site --convert-heic
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
