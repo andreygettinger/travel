@@ -45,6 +45,12 @@ nav a{border-color:var(--page-border)}nav a:hover{background:var(--page-hover)}
 .map-places-layout #countryMap{display:block;width:100%;height:auto;max-height:405px;overflow:visible}
 .map-places-layout .place-panel{max-height:385px}
 @media(max-width:760px){.map-places-layout{width:min(100%,650px);grid-template-columns:1fr;gap:12px}.map-places-layout .map-wrap{max-width:100%}.map-places-layout #countryMap{max-height:340px}.map-places-layout .place-panel{max-height:none}}
+
+/* Keep the visited-places list vertically scrollable, without horizontal scrolling. */
+.place-panel{overflow-x:hidden;overflow-y:auto;min-width:0;max-width:100%}
+.place-list,.place-link{min-width:0;max-width:100%}
+.place-link{overflow-wrap:anywhere;white-space:normal}
+@media(max-width:760px){.place-panel{overflow:visible}}
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
 <div class="eyebrow">Travel photography / Georgia</div><h1>Georgia.</h1>
 <div class="map-places-layout"><div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of Georgia with visited locations"></svg></div><aside class="place-panel" aria-label="Visited places"><h2 class="place-panel-heading">Places I’ve been</h2><p class="place-panel-subtitle">Hover to locate · Click to explore</p><div class="place-list" id="placeList"></div></aside></div>

@@ -19,6 +19,12 @@ nav a{border-color:var(--page-border)}nav a:hover{background:var(--page-hover)}
 .gallery .photo-item,.gallery .photo-item.landscape,.gallery .photo-item.portrait,.gallery .photo-item.square{display:block;width:100%;break-inside:avoid;page-break-inside:avoid;margin:0 0 18px;overflow:hidden;}
 .gallery img{display:block;width:100%;height:auto;object-fit:contain;}
 @media(max-width:560px){.gallery{columns:1;}.gallery .photo-item{margin-bottom:12px;}}
+
+/* Keep the visited-places list vertically scrollable, without horizontal scrolling. */
+.place-panel{overflow-x:hidden;overflow-y:auto;min-width:0;max-width:100%}
+.place-list,.place-link{min-width:0;max-width:100%}
+.place-link{overflow-wrap:anywhere;white-space:normal}
+@media(max-width:760px){.place-panel{overflow:visible}}
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main><p>TRAVEL PHOTOGRAPHY / WALES</p><h1>Wales.</h1><p>Add photographs to <code>photos/wales/</code> and place image tags below.</p><div class="gallery" id="gallery"></div>
 <script>
 // ADD YOUR PHOTO FILE NAMES HERE, between the quotes.

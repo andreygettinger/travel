@@ -53,6 +53,12 @@ main{max-width:none;width:100%;padding-left:clamp(18px,2.4vw,52px);padding-right
 .map-places-layout #countryMap{display:block;width:100%;height:auto;max-height:405px;overflow:visible}
 .map-places-layout .place-panel{max-height:385px}
 @media(max-width:760px){.map-places-layout{width:min(100%,650px);grid-template-columns:1fr;gap:12px}.map-places-layout .map-wrap{max-width:100%}.map-places-layout #countryMap{max-height:340px}.map-places-layout .place-panel{max-height:none}}
+
+/* Keep the visited-places list vertically scrollable, without horizontal scrolling. */
+.place-panel{overflow-x:hidden;overflow-y:auto;min-width:0;max-width:100%}
+.place-list,.place-link{min-width:0;max-width:100%}
+.place-link{overflow-wrap:anywhere;white-space:normal}
+@media(max-width:760px){.place-panel{overflow:visible}}
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
 <div class="eyebrow">Travel photography / Spain</div><h1>Spain.</h1>
 <div class="map-places-layout"><div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of Spain with visited locations"></svg></div><aside class="place-panel" aria-label="Visited places"><h2 class="place-panel-heading">Places I’ve been</h2><p class="place-panel-subtitle">Hover to locate · Click to explore</p><div class="place-list" id="placeList"></div></aside></div>
@@ -231,23 +237,11 @@ try {
   const countries = topojson.feature(atlas,atlas.objects.countries).features;
   const feature = countries.find(f => String(f.id).padStart(3,'0') === '724');
   if (!feature) throw new Error('Country outline not found in map data');
-  // Show mainland Spain and the Balearic Islands, excluding the Canary Islands.
-  // Filter individual polygons before fitting the map, so the mainland stays large.
-  const mainlandFeature = {
-    ...feature,
-    geometry: feature.geometry.type === 'MultiPolygon'
-      ? {type:'MultiPolygon', coordinates: feature.geometry.coordinates.filter(coords => {
-          const center = d3.geoCentroid({type:'Polygon',coordinates:coords});
-          return center[1] > 35 && center[0] > -10 && center[0] < 5;
-        })}
-      : feature.geometry
-  };
-  const projection = d3.geoMercator().fitExtent([[65,35],[835,555]],mainlandFeature);
+  const projection = d3.geoMercator().fitExtent([[65,35],[835,555]],feature);
   const path = d3.geoPath(projection);
-  svg.append('path').datum(mainlandFeature).attr('class','outline').attr('d',path);
+  svg.append('path').datum(feature).attr('class','outline').attr('d',path);
   const symbols = svg.append('g');
   places.forEach((place, i) => {
-    if (place.lat < 35) return; // Do not show Canary Island stars on this map.
     const point = projection([place.lon,place.lat]);
     if (!point || !Number.isFinite(point[0]) || !Number.isFinite(point[1])) return;
     const group=symbols.append('g').attr('transform',`translate(${point[0]},${point[1]})`);
