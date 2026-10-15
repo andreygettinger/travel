@@ -7,7 +7,7 @@
 :root{color-scheme:light dark;--bg:light-dark(#f5f3ef,#11110f);--surface:light-dark(#fff,#191816);--text:light-dark(#181714,#f4f1eb);--muted:light-dark(#706d67,#aaa59d);--line:light-dark(#dedad3,#302e2a);--accent:light-dark(#27352c,#c9d6cb)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}a{color:inherit}
 .nav{height:clamp(58px,7vh,90px);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,5vw,110px);border-bottom:1px solid var(--line)}
-.brand{font:clamp(20px,1.4vw,28px) Georgia,serif;text-decoration:none}.back{font-size:12px;letter-spacing:.1em;text-decoration:none;color:var(--muted);text-transform:uppercase}.back:hover{color:var(--text)}
+.brand{font:clamp(20px,1.4vw,28px) Georgia,serif;text-decoration:none}.back{font-family:Arial,Helvetica,sans-serif;font-size:clamp(17px,1.15vw,22px);font-weight:normal;letter-spacing:.04em;text-decoration:none;color:var(--muted);white-space:nowrap}.back:hover{color:var(--text)}
 main{max-width:1450px;margin:0 auto;padding:clamp(35px,7vh,105px) clamp(20px,6vw,110px);display:grid;grid-template-columns:minmax(250px,.8fr) 1.2fr;align-items:center;gap:clamp(35px,8vw,140px)}
 .portrait{width:min(100%,510px);aspect-ratio:1;border-radius:50%;border:1px solid var(--line);background:var(--surface);overflow:hidden;display:grid;place-items:center;margin:auto;color:var(--muted);font:clamp(40px,9vw,110px) Georgia,serif}
 .portrait img{width:100%;height:100%;object-fit:cover;display:block}
@@ -36,12 +36,11 @@ footer{padding:24px clamp(20px,5vw,110px);border-top:1px solid var(--line);font-
 <header class="nav"><a class="brand" href="index.html">Andrey</a><a class="back" href="index.html">← Back to world map</a></header>
 <main>
 <div class="portrait"><img src="images/about-page.jpg" alt="Portrait of Andrey" onerror="this.style.display='none'"></div>
-<section><p class="eyebrow">The person behind the camera</p><h1>About Me.</h1><div class="copy"><p>Hi, I'm Andrey. Welcome to my photography journal.</p><p>This is a collection of places I've explored and moments I captured along the way. In these photos, I wanted to convey the atmosphere of my travels, as well as the character of individual locations. The earliest of these photos was taken in summer of 2019. Photos from my earlier trips (Russia, Canada, Bahamas) might be added later if I'm able to find them. </p><p><!-- Edit this paragraph to tell visitors more about yourself, your travels, and what photography means to you. -->Hope you like the photos.</p></div></section>
+<section><h1>About Me.</h1><div class="copy"><p>Hi, I'm Andrey. Welcome to my photography journal.</p><p>This is a collection of places I've explored and moments I captured along the way. In these photos, I wanted to convey the atmosphere of my travels, as well as the character of individual locations. The earliest of these photos was taken in summer of 2019. Photos from my earlier trips (Russia, Canada, Bahamas) might be added later if I'm able to find them.</p><p>Hope you like the photos.</p></div></section>
 </main>
 <section class="about-gallery-section" aria-label="More photos of me">
-<h2 class="about-gallery-title">Photographs.</h2>
 <div class="about-gallery" id="aboutGallery"></div>
-<p class="about-gallery-empty" id="aboutGalleryEmpty" hidden>More photographs coming soon.</p>
+<p class="about-gallery-empty" id="aboutGalleryEmpty" hidden>Photos coming soon.</p>
 </section>
 <div class="about-lightbox" id="aboutLightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
 <button class="lb-close" id="aboutClose" aria-label="Close photo">×</button>
@@ -53,7 +52,7 @@ footer{padding:24px clamp(20px,5vw,110px);border-top:1px solid var(--line);font-
 <script>
 // Add photos named about-1.jpg, about-2.jpg, etc. to your images/ folder.
 // Change the filenames below if your photos have different names.
-const aboutPhotoFiles = Array.from({length:20},(_,i)=>`images/about-${i+1}.jpg`);
+const aboutPhotoFiles = ["images/about-1.jpg", "images/about-2.jpg", "images/about-3.jpg"];
 const gallery=document.getElementById('aboutGallery');
 const lightbox=document.getElementById('aboutLightbox');
 const lightboxImage=document.getElementById('aboutLightboxImage');
