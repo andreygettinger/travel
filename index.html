@@ -102,12 +102,31 @@ html,body{width:100%;height:100%;overflow:hidden}
 .avatar{display:inline-grid;place-items:center;width:clamp(46px,6.5dvh,76px);height:clamp(46px,6.5dvh,76px);border-radius:50%;overflow:hidden;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-family:Georgia,serif;font-size:16px;flex:none}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 @media(max-width:440px){.about-link{gap:6px;font-size:15px}.avatar{width:44px;height:44px}.brand-subtitle{display:none}}
+/* Subtle map zoom controls */
+.world-map{position:relative;overflow:hidden!important}
+.map-zoom-controls{position:absolute;right:14px;bottom:14px;z-index:2;display:flex;flex-direction:column;gap:5px}
+.map-zoom-controls button{width:34px;height:34px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--text);font:20px Arial,sans-serif;cursor:pointer;box-shadow:0 1px 5px #0001}
+.map-zoom-controls button:hover{background:var(--bg)}
+.map-zoom-controls .zoom-reset{font-size:11px;font-weight:600;letter-spacing:.03em;width:auto;padding:0 9px}
+.world-map svg{touch-action:none;cursor:grab}
+.world-map svg:active{cursor:grabbing}
+@media(max-width:700px){.map-zoom-controls{right:8px;bottom:8px}.map-zoom-controls button{width:30px;height:30px}}
+.about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: clamp(17px, 1.15vw, 22px);
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
 </style>
 </head>
 <body>
 <div id="app">
-<header class="nav"><div class="brand">Andrey. <span class="brand-subtitle">Photos from Around the World.</span></div><a class="about-link" href="about.html" aria-label="About Me"><span>About Me</span><span class="avatar"><img src="images/home-profile.jpg" alt="Portrait of Andrey" onerror="this.style.display='none'"></span></a></header>
-<section class="map-section" id="places"><div class="map-head"><h2>Where I've been.</h2><p>Explore the world by country. Select a country to view its photographs.</p></div><div class="world-map"><svg id="worldSvg" viewBox="0 0 1000 520" role="img" aria-label="Interactive map of countries"><g id="mapCountries"></g></svg><div id="mapLoading" class="map-loading">Loading detailed world borders…</div></div><div class="map-note"><span>Country boundaries · Natural Earth / World Atlas</span><span>Highlighted countries open photo galleries</span></div><div class="country-panel" id="countryPanel"><div><h3 id="countryName"></h3><p id="countryInfo"></p></div><button id="countryPhotos" type="button">View photographs</button></div></section>
+<header class="nav"><div class="brand">Photos from Around the World. <span class="brand-subtitle">By Andrey.</span></div><a class="about-link" href="about.html" aria-label="About Me"><span>About Me</span><span class="avatar"><img src="images/home-profile.jpg" alt="Portrait of Andrey" onerror="this.style.display='none'"></span></a></header>
+<section class="map-section" id="places"><div class="map-head"><p style="text-align: left; white-space: nowrap;">Explore the world by country. Select a country to view its photographs.</p></div><div class="world-map"><svg id="worldSvg" viewBox="0 0 1000 520" role="img" aria-label="Interactive map of countries"><g id="mapCountries"></g></svg><div class="map-zoom-controls" aria-label="Map zoom controls"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button><button id="zoomReset" class="zoom-reset" type="button" aria-label="Reset map zoom">Reset</button></div><div id="mapLoading" class="map-loading">Loading detailed world borders…</div></div><div class="map-note"><span>Country boundaries · Natural Earth / World Atlas</span><span>Highlighted countries open photo galleries</span></div><div class="country-panel" id="countryPanel"><div><h3 id="countryName"></h3><p id="countryInfo"></p></div><button id="countryPhotos" type="button">View photographs</button></div></section>
 
 
 <footer class="footer"><span>© 2026 Andrey</span><span>Photography / Travel / Life</span></footer>
@@ -133,12 +152,21 @@ countryPhotos.addEventListener('click',()=>{if(window.activeCountry)location.hre
    });
  });
  const projection=d3.geoNaturalEarth1().fitExtent([[12,12],[988,508]],{type:'Sphere'}),path=d3.geoPath(projection),g=d3.select('#mapCountries');
+ const svg=d3.select('#worldSvg');
+ const zoom=d3.zoom().scaleExtent([1,6]).translateExtent([[0,0],[1000,520]]).extent([[0,0],[1000,520]])
+   .filter(event=>!event.target.closest('button') && (!event.ctrlKey || event.type==='wheel'))
+   .on('zoom',event=>g.attr('transform',event.transform));
+ svg.call(zoom);
+ // Double-click zooms towards the pointer; wheel and touch pinch zoom naturally.
+ document.getElementById('zoomIn').addEventListener('click',()=>svg.transition().duration(300).call(zoom.scaleBy,1.65));
+ document.getElementById('zoomOut').addEventListener('click',()=>svg.transition().duration(300).call(zoom.scaleBy,1/1.65));
+ document.getElementById('zoomReset').addEventListener('click',()=>svg.transition().duration(450).call(zoom.transform,d3.zoomIdentity));
  const countries=g.selectAll('path').data(features).join('path').attr('class',d=>visited[String(d.id).padStart(3,'0')]?'country visited':'country').attr('d',path).attr('tabindex',d=>visited[String(d.id).padStart(3,'0')]?0:null).attr('role',d=>visited[String(d.id).padStart(3,'0')]?'button':null).attr('aria-label',d=>visited[String(d.id).padStart(3,'0')]?.name||d.properties.name||'Country');
  function choose(node,item){countries.classed('selected',false);g.selectAll('.hk-marker').classed('selected',false);d3.select(node).classed('selected',true);window.activeCountry=item||null;countryName.textContent=item?.name||node.getAttribute('aria-label')||'Country';countryInfo.textContent=item?'Visited · Open the country photography page.':'Not marked as visited.';countryPhotos.style.display=item?'inline-block':'none';panel.classList.add('open')}
- countries.on('click',(event,d)=>{const item=visited[String(d.id).padStart(3,'0')];if(item)location.href=item.url}).on('keydown',(event,d)=>{const item=visited[String(d.id).padStart(3,'0')];if(item&&(event.key==='Enter'||event.key===' ')){event.preventDefault();location.href=item.url}});
+ countries.on('click',(event,d)=>{if(event.defaultPrevented)return;const item=visited[String(d.id).padStart(3,'0')];if(item)location.href=item.url}).on('keydown',(event,d)=>{const item=visited[String(d.id).padStart(3,'0')];if(item&&(event.key==='Enter'||event.key===' ')){event.preventDefault();location.href=item.url}});
  // Hong Kong is not a separate country polygon in this atlas: mark it at its real location.
  const hk=projection([114.1694,22.3193]);
- if(hk){const marker=g.append('circle').attr('class','hk-marker visited').attr('cx',hk[0]).attr('cy',hk[1]).attr('r',4).attr('tabindex',0).attr('role','button').attr('aria-label','Hong Kong');marker.append('title').text('Hong Kong');marker.on('click',()=>location.href=visited['344'].url).on('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();location.href=visited['344'].url}})}
+ if(hk){const marker=g.append('circle').attr('class','hk-marker visited').attr('cx',hk[0]).attr('cy',hk[1]).attr('r',4).attr('tabindex',0).attr('role','button').attr('aria-label','Hong Kong');marker.append('title').text('Hong Kong');marker.on('click',event=>{if(!event.defaultPrevented)location.href=visited['344'].url}).on('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();location.href=visited['344'].url}})}
  document.getElementById('mapLoading').remove();
  }catch(e){document.getElementById('mapLoading').textContent='Map requires an internet connection to load country borders.'}})();
 </script>
