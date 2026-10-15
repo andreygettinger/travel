@@ -25,16 +25,59 @@ nav a{border-color:var(--page-border)}nav a:hover{background:var(--page-hover)}
 .gallery img{display:block;width:100%;height:auto;object-fit:contain;}
 @media(max-width:560px){.gallery{columns:1;}.gallery .photo-item{margin-bottom:12px;}}
 
-/* Wide, responsive photo gallery: natural aspect ratios, equal column widths. */
-main{max-width:none;width:100%;padding-left:clamp(18px,2.4vw,52px);padding-right:clamp(18px,2.4vw,52px)}
-.gallery{display:block;columns:2;column-gap:clamp(10px,1.2vw,22px);width:100%}
-.gallery .photo-item,.gallery .photo-item.landscape,.gallery .photo-item.portrait,.gallery .photo-item.square{display:block;width:100%;break-inside:avoid;margin-bottom:clamp(10px,1.2vw,22px)}
-.gallery img{width:100%;height:auto;display:block;object-fit:contain}
+/* Interactive place index — preserves the existing map and gallery. */
+.map-places-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(245px,.75fr);align-items:center;gap:clamp(18px,3vw,56px);margin:30px 0 12px}
+.map-places-layout .map-wrap{margin:0;min-width:0;max-width:none}
+.place-panel{align-self:center;max-height:520px;overflow:auto;padding:8px 0 8px 20px;border-left:1px solid var(--page-line,#dedbd4);scrollbar-width:thin}
+.place-panel-heading{font:normal 25px Georgia,serif;margin:0 0 8px;color:var(--page-text,#181714)}
+.place-panel-subtitle{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--page-muted,#777168);margin:0 0 14px}
+.place-link{display:flex;align-items:center;gap:12px;width:100%;padding:11px 9px;border-radius:7px;font-size:14px;line-height:1.35;color:var(--page-text,#181714);text-decoration:none;transition:background .15s,transform .15s}
+.place-link:hover,.place-link:focus-visible,.place-link.is-active{background:var(--page-hover,#e7e9df);transform:translateX(3px);outline:none}
+.place-dot{width:7px;height:7px;flex:none;border-radius:50%;background:#c9a451;box-shadow:0 0 0 3px #c9a45122}
+.place-link:hover .place-dot,.place-link.is-active .place-dot{background:#f4d57c;box-shadow:0 0 0 5px #d5b35d33}
+.star.is-active{fill:#fff6b6;stroke:#ae7d26;stroke-width:3;filter:drop-shadow(0 0 7px #f4d57c);}
+@media(max-width:760px){.map-places-layout{grid-template-columns:1fr;gap:16px}.place-panel{max-height:none;overflow:visible;padding:0;border-left:0}.place-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px}}
+@media(max-width:450px){.place-list{grid-template-columns:1fr}}
+
+/* Consistent, compact atlas footprint on every country page. */
+.map-places-layout{width:min(100%,1020px);margin:22px auto 8px;grid-template-columns:minmax(0,650px) minmax(210px,290px);justify-content:center;align-items:center;gap:clamp(18px,2.8vw,40px)}
+.map-places-layout .map-wrap{width:100%;max-width:650px;margin:0 auto;display:flex;justify-content:center;align-items:center}
+.map-places-layout #countryMap{display:block;width:100%;height:auto;max-height:405px;overflow:visible}
+.map-places-layout .place-panel{max-height:385px}
+@media(max-width:760px){.map-places-layout{width:min(100%,650px);grid-template-columns:1fr;gap:12px}.map-places-layout .map-wrap{max-width:100%}.map-places-layout #countryMap{max-height:340px}.map-places-layout .place-panel{max-height:none}}
+
+/* Keep the visited-places list vertically scrollable, without horizontal scrolling. */
+.place-panel{overflow-x:hidden;overflow-y:auto;min-width:0;max-width:100%}
+.place-list,.place-link{min-width:0;max-width:100%}
+.place-link{overflow-wrap:anywhere;white-space:normal}
+@media(max-width:760px){.place-panel{overflow:visible}}
+
+/* Full-width photography gallery: edge-to-edge across the browser viewport. */
+.gallery-title{margin-left:0}
+.gallery{
+  display:block;
+  width:100vw;
+  max-width:none;
+  position:relative;
+  left:50%;
+  margin-left:-50vw;
+  margin-right:0;
+  padding:0;
+  columns:2;
+  column-gap:clamp(8px,1vw,18px);
+  box-sizing:border-box;
+}
+.gallery .photo-item,.gallery .photo-item.landscape,.gallery .photo-item.portrait,.gallery .photo-item.square{
+  display:block;width:100%;max-width:none;break-inside:avoid;
+  margin:0 0 clamp(8px,1vw,18px);
+}
+.gallery img{display:block;width:100%;max-width:none;height:auto;object-fit:contain}
 @media(min-width:1800px){.gallery{columns:3}}
 @media(max-width:650px){.gallery{columns:1}}
+
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
 <div class="eyebrow">Travel photography / Croatia</div><h1>Croatia.</h1>
-<div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of Croatia with visited locations"></svg></div>
+<div class="map-places-layout"><div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of Croatia with visited locations"></svg></div><aside class="place-panel" aria-label="Visited places"><h2 class="place-panel-heading">Places I’ve been</h2><p class="place-panel-subtitle">Hover to locate · Click to explore</p><div class="place-list" id="placeList"></div></aside></div>
 <p class="hint" id="mapStatus">Add your visited cities and places as stars on this map.</p>
 <h2 class="gallery-title">Photographs</h2><div class="gallery" id="gallery"></div>
 <script type="module">
@@ -97,6 +140,27 @@ async function loadGallery() {
 }
 loadGallery();
 
+const placeList = document.getElementById('placeList');
+const placeLinks = places.map((place, i) => {
+  const a = document.createElement('a');
+  a.className = 'place-link';
+  a.href = place.url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.lat + ',' + place.lon)}`;
+  a.target = '_blank'; a.rel = 'noopener noreferrer';
+  const dot = document.createElement('span'); dot.className = 'place-dot';
+  const label = document.createElement('span'); label.textContent = place.name;
+  a.append(dot, label); placeList.appendChild(a);
+  a.addEventListener('mouseenter', () => setActivePlace(i, true));
+  a.addEventListener('mouseleave', () => setActivePlace(i, false));
+  a.addEventListener('focus', () => setActivePlace(i, true));
+  a.addEventListener('blur', () => setActivePlace(i, false));
+  return a;
+});
+const starNodes = [];
+function setActivePlace(i, on) {
+  if (starNodes[i]) starNodes[i].classList.toggle('is-active', on);
+  if (placeLinks[i]) placeLinks[i].classList.toggle('is-active', on);
+}
+if (!places.length) document.querySelector('.place-panel').style.display = 'none';
 const svg = d3.select('#countryMap');
 try {
   const response = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json');
@@ -109,12 +173,17 @@ try {
   const path = d3.geoPath(projection);
   svg.append('path').datum(feature).attr('class','outline').attr('d',path);
   const symbols = svg.append('g');
-  places.forEach(place => {
+  places.forEach((place, i) => {
     const point = projection([place.lon,place.lat]);
     if (!point || !Number.isFinite(point[0]) || !Number.isFinite(point[1])) return;
     const group=symbols.append('g').attr('transform',`translate(${point[0]},${point[1]})`);
     const star=group.append('path').attr('class','star').attr('d',d3.symbol().type(d3.symbolStar).size(115)()).attr('tabindex',0).attr('role','img').attr('aria-label',place.name);
     star.append('title').text(place.name);
+    starNodes[i] = star.node();
+    star.on('mouseenter', () => setActivePlace(i, true))
+        .on('mouseleave', () => setActivePlace(i, false))
+        .on('focus', () => setActivePlace(i, true))
+        .on('blur', () => setActivePlace(i, false));
     if (place.url) { star.style('cursor','pointer').on('click',()=>window.open(place.url,'_blank','noopener,noreferrer')); }
     // Place name appears on hover via the star tooltip.
   });

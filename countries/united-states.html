@@ -32,9 +32,60 @@ main{max-width:none;width:100%;padding-left:clamp(18px,2.4vw,52px);padding-right
 .gallery img{width:100%;height:auto;display:block;object-fit:contain}
 @media(min-width:1800px){.gallery{columns:3}}
 @media(max-width:650px){.gallery{columns:1}}
+
+/* Interactive place index — preserves the existing map and gallery. */
+.map-places-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(245px,.75fr);align-items:center;gap:clamp(18px,3vw,56px);margin:30px 0 12px}
+.map-places-layout .map-wrap{margin:0;min-width:0;max-width:none}
+.place-panel{align-self:center;max-height:520px;overflow:auto;padding:8px 0 8px 20px;border-left:1px solid var(--page-line,#dedbd4);scrollbar-width:thin}
+.place-panel-heading{font:normal 25px Georgia,serif;margin:0 0 8px;color:var(--page-text,#181714)}
+.place-panel-subtitle{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--page-muted,#777168);margin:0 0 14px}
+.place-link{display:flex;align-items:center;gap:12px;width:100%;padding:11px 9px;border-radius:7px;font-size:14px;line-height:1.35;color:var(--page-text,#181714);text-decoration:none;transition:background .15s,transform .15s}
+.place-link:hover,.place-link:focus-visible,.place-link.is-active{background:var(--page-hover,#e7e9df);transform:translateX(3px);outline:none}
+.place-dot{width:7px;height:7px;flex:none;border-radius:50%;background:#c9a451;box-shadow:0 0 0 3px #c9a45122}
+.place-link:hover .place-dot,.place-link.is-active .place-dot{background:#f4d57c;box-shadow:0 0 0 5px #d5b35d33}
+.star.is-active{fill:#fff6b6;stroke:#ae7d26;stroke-width:3;filter:drop-shadow(0 0 7px #f4d57c);}
+@media(max-width:760px){.map-places-layout{grid-template-columns:1fr;gap:16px}.place-panel{max-height:none;overflow:visible;padding:0;border-left:0}.place-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px}}
+@media(max-width:450px){.place-list{grid-template-columns:1fr}}
+
+/* Consistent, compact atlas footprint on every country page. */
+.map-places-layout{width:min(100%,1020px);margin:22px auto 8px;grid-template-columns:minmax(0,650px) minmax(210px,290px);justify-content:center;align-items:center;gap:clamp(18px,2.8vw,40px)}
+.map-places-layout .map-wrap{width:100%;max-width:650px;margin:0 auto;display:flex;justify-content:center;align-items:center}
+.map-places-layout #countryMap{display:block;width:100%;height:auto;max-height:405px;overflow:visible}
+.map-places-layout .place-panel{max-height:385px}
+@media(max-width:760px){.map-places-layout{width:min(100%,650px);grid-template-columns:1fr;gap:12px}.map-places-layout .map-wrap{max-width:100%}.map-places-layout #countryMap{max-height:340px}.map-places-layout .place-panel{max-height:none}}
+
+/* Keep the visited-places list vertically scrollable, without horizontal scrolling. */
+.place-panel{overflow-x:hidden;overflow-y:auto;min-width:0;max-width:100%}
+.place-list,.place-link{min-width:0;max-width:100%}
+.place-link{overflow-wrap:anywhere;white-space:normal}
+@media(max-width:760px){.place-panel{overflow:visible}}
+
+/* Full-width photography gallery: edge-to-edge across the browser viewport. */
+.gallery-title{margin-left:0}
+.gallery{
+  display:block;
+  width:100vw;
+  max-width:none;
+  position:relative;
+  left:50%;
+  margin-left:-50vw;
+  margin-right:0;
+  padding:0;
+  columns:2;
+  column-gap:clamp(8px,1vw,18px);
+  box-sizing:border-box;
+}
+.gallery .photo-item,.gallery .photo-item.landscape,.gallery .photo-item.portrait,.gallery .photo-item.square{
+  display:block;width:100%;max-width:none;break-inside:avoid;
+  margin:0 0 clamp(8px,1vw,18px);
+}
+.gallery img{display:block;width:100%;max-width:none;height:auto;object-fit:contain}
+@media(min-width:1800px){.gallery{columns:3}}
+@media(max-width:650px){.gallery{columns:1}}
+
 </style></head><body><nav><a href="../index.html">← Andrey / World map</a></nav><main>
 <div class="eyebrow">Travel photography / United States</div><h1>United States.</h1>
-<div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of United States with visited locations"></svg></div>
+<div class="map-places-layout"><div class="map-wrap"><svg id="countryMap" viewBox="0 0 900 590" role="img" aria-label="Map of United States with visited locations"></svg></div><aside class="place-panel" aria-label="Visited places"><h2 class="place-panel-heading">Places I’ve been</h2><p class="place-panel-subtitle">Hover to locate · Click to explore</p><div class="place-list" id="placeList"></div></aside></div>
 <p class="hint" id="mapStatus">Add your visited cities and places as stars on this map.</p>
 <h2 class="gallery-title">Photographs</h2><div class="gallery" id="gallery"></div>
 <script type="module">
@@ -45,193 +96,193 @@ import * as topojson from 'https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+e
 // Example: { name: "Lima", lat: -12.0464, lon: -77.0428 },
 const places = [
   {
-    "name": "Piney Creek",
+    "name": "Piney Creek, North Carolina",
     "lat": 36.55,
     "lon": -81.285,
     "url": "https://www.google.com/maps/place/Piney+Creek/data=!4m2!3m1!1s0x8851b97d93d8c975:0xa6e7f7f6bb820b7a"
   },
   {
-    "name": "Denver, CO",
+    "name": "Denver, Colorado",
     "lat": 39.7392,
     "lon": -104.9903,
     "url": "https://www.google.com/maps/place/Denver,+CO/data=!4m2!3m1!1s0x0:0x118ef4f8278a36d6"
   },
   {
-    "name": "Rocky Mountain National Park",
+    "name": "Rocky Mountain National Park, Colorado",
     "lat": 40.3428,
     "lon": -105.6836,
     "url": "https://www.google.com/maps/place/Rocky+Mountain+National+Park/data=!4m2!3m1!1s0x876979e4455903e9:0xfa27ee43a78e8217"
   },
   {
-    "name": "Montauk Point Lighthouse Museum",
+    "name": "Montauk Point Lighthouse Museum, New York",
     "lat": 41.0708,
     "lon": -71.8573,
     "url": "https://www.google.com/maps/place/Montauk+Point+Lighthouse+Museum/data=!4m2!3m1!1s0x89ef55d836195fd7:0x3d4100f61c982290"
   },
   {
-    "name": "Bar Harbor",
+    "name": "Bar Harbor, Maine",
     "lat": 44.3876,
     "lon": -68.2039,
     "url": "https://www.google.com/maps/place/Bar+Harbor/data=!4m2!3m1!1s0x4caebe4815802593:0x88e91a6528cad91b"
   },
   {
-    "name": "Augusta",
+    "name": "Augusta, Maine",
     "lat": 44.3106,
     "lon": -69.7795,
     "url": "https://www.google.com/maps/place/Augusta/data=!4m2!3m1!1s0x4cb200fdafacc49d:0x79a3488d64220b2d"
   },
   {
-    "name": "Freeport",
+    "name": "Freeport, Maine",
     "lat": 43.857,
     "lon": -70.1031,
     "url": "https://www.google.com/maps/place/Freeport/data=!4m2!3m1!1s0x4cb27e343e85a163:0x2b0ee47bc7bb0e7d"
   },
   {
-    "name": "Concord",
+    "name": "Concord, Massachusetts",
     "lat": 42.4604,
     "lon": -71.3489,
     "url": "https://www.google.com/maps/place/Concord/data=!4m2!3m1!1s0x89e26a96154a8917:0x5a871a0a62528f1"
   },
   {
-    "name": "Montpelier",
+    "name": "Montpelier, Vermont",
     "lat": 44.2601,
     "lon": -72.5754,
     "url": "https://www.google.com/maps/place/Montpelier/data=!4m2!3m1!1s0x4cb5a78cc44dea05:0x4891e094ceb5836"
   },
   {
-    "name": "Burlington",
+    "name": "Burlington, Vermont",
     "lat": 44.4759,
     "lon": -73.2121,
     "url": "https://www.google.com/maps/place/Burlington/data=!4m2!3m1!1s0x4cca7a55b69b55e5:0xc35fe519720e498e"
   },
   {
-    "name": "High Point",
+    "name": "High Point, North Carolina",
     "lat": 35.9557,
     "lon": -80.0053,
     "url": "https://www.google.com/maps/place/High+Point/data=!4m2!3m1!1s0x88530bc771b841eb:0xf2ee8a2d049910df"
   },
   {
-    "name": "Wright Brothers National Memorial",
+    "name": "Wright Brothers National Memorial, North Carolina",
     "lat": 36.0143,
     "lon": -75.6674,
     "url": "https://www.google.com/maps/place/Wright+Brothers+National+Memorial/data=!4m2!3m1!1s0x89a4e2a6f25f17b5:0xfb696e1a15347b2b"
   },
   {
-    "name": "Roanoke Rapids",
+    "name": "Roanoke Rapids, North Carolina",
     "lat": 36.4615,
     "lon": -77.6541,
     "url": "https://www.google.com/maps/place/Roanoke+Rapids/data=!4m2!3m1!1s0x89ae10ceb197833d:0xd40c05cffebb35fd"
   },
   {
-    "name": "Morehead City",
+    "name": "Morehead City, North Carolina",
     "lat": 34.7229,
     "lon": -76.726,
     "url": "https://www.google.com/maps/place/Morehead+City/data=!4m2!3m1!1s0x89a89096a903ad4b:0xe19ed7ec83bb0e4c"
   },
   {
-    "name": "Magnolia",
+    "name": "Magnolia, Delaware",
     "lat": 39.0712,
     "lon": -75.476,
     "url": "https://www.google.com/maps/search/39.0712238,-75.4760327"
   },
   {
-    "name": "Cambridge",
+    "name": "Cambridge, Massachusetts",
     "lat": 42.3736,
     "lon": -71.1097,
     "url": "https://www.google.com/maps/place/Cambridge/data=!4m2!3m1!1s0x89e370a5cb30cc5f:0xc53a8e6489686c87"
   },
   {
-    "name": "East Carolina University",
+    "name": "East Carolina University, North Carolina",
     "lat": 35.6077,
     "lon": -77.3664,
     "url": "https://www.google.com/maps/place/East+Carolina+University/data=!4m2!3m1!1s0x89aee796e2781607:0x5237fe62a4cda93b"
   },
   {
-    "name": "Boone",
+    "name": "Boone, North Carolina",
     "lat": 36.2168,
     "lon": -81.6746,
     "url": "https://www.google.com/maps/place/Boone/data=!4m2!3m1!1s0x8850d12869945a65:0x6e0a346179f5a6e9"
   },
   {
-    "name": "Chapel Hill",
+    "name": "Chapel Hill, North Carolina",
     "lat": 35.9132,
     "lon": -79.0558,
     "url": "https://www.google.com/maps/place/Chapel+Hill/data=!4m2!3m1!1s0x89acc31c216e7ea7:0x7f03bae00443e4cb"
   },
   {
-    "name": "Raleigh",
+    "name": "Raleigh, North Carolina",
     "lat": 35.7796,
     "lon": -78.6382,
     "url": "https://www.google.com/maps/place/Raleigh/data=!4m2!3m1!1s0x89ac5a2f9f51e0f7:0x6790b6528a11f0ad"
   },
   {
-    "name": "Rehoboth Beach",
+    "name": "Rehoboth Beach, Delaware",
     "lat": 38.7209,
     "lon": -75.076,
     "url": "https://www.google.com/maps/place/Rehoboth+Beach/data=!4m2!3m1!1s0x89b896667c7333a7:0x61182de5a751636a"
   },
   {
-    "name": "Washington",
+    "name": "Washington, Delaware",
     "lat": 38.904,
     "lon": -75.572,
     "url": "https://www.google.com/maps/place/Washington/data=!4m2!3m1!1s0x89b7c6de5af6e45b:0xc2524522d4885d2a"
   },
   {
-    "name": "Charleston",
+    "name": "Charleston, South Carolina",
     "lat": 32.7765,
     "lon": -79.9311,
     "url": "https://www.google.com/maps/place/Charleston/data=!4m2!3m1!1s0x88fe7a42dca82477:0x35faf7e0aee1ec6b"
   },
   {
-    "name": "Charlotte",
+    "name": "Charlotte, North Carolina",
     "lat": 35.2271,
     "lon": -80.8431,
     "url": "https://www.google.com/maps/place/Charlotte/data=!4m2!3m1!1s0x88541fc4fc381a81:0x884650e6bf43d164"
   },
   {
-    "name": "Baltimore",
+    "name": "Baltimore, Maryland",
     "lat": 39.2904,
     "lon": -76.6122,
     "url": "https://www.google.com/maps/place/Baltimore/data=!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758"
   },
   {
-    "name": "Apex",
+    "name": "Apex, North Carolina",
     "lat": 35.7327,
     "lon": -78.8503,
     "url": "https://www.google.com/maps/place/Apex/data=!4m2!3m1!1s0x89ac92a3c19280d1:0x85cd817e17e28015"
   },
   {
-    "name": "Atlanta",
+    "name": "Atlanta, Georgia",
     "lat": 33.749,
     "lon": -84.388,
     "url": "https://www.google.com/maps/place/Atlanta/data=!4m2!3m1!1s0x88f5045d6993098d:0x66fede2f990b630b"
   },
   {
-    "name": "Wilmington",
+    "name": "Wilmington, North Carolina",
     "lat": 34.2257,
     "lon": -77.9447,
     "url": "https://www.google.com/maps/place/Wilmington/data=!4m2!3m1!1s0x89a9f5a20debaed5:0x5e66493884093032"
   },
   {
-    "name": "Philadelphia",
+    "name": "Philadelphia, Pennsylvania",
     "lat": 39.9526,
     "lon": -75.1636,
     "url": "https://www.google.com/maps/place/Philadelphia/data=!4m2!3m1!1s0x89c6b7d8d4b54beb:0x89f514d88c3e58c1"
   },
   {
-    "name": "Boston",
+    "name": "Boston, Massachusetts",
     "lat": 42.3601,
     "lon": -71.0589,
     "url": "https://www.google.com/maps/place/Boston/data=!4m2!3m1!1s0x89e3652d0d3d311b:0x787cbf240162e8a0"
   },
   {
-    "name": "New York",
+    "name": "New York, New York",
     "lat": 40.7128,
     "lon": -74.006,
     "url": "https://www.google.com/maps/place/New+York/data=!4m2!3m1!1s0x89c24fa5d33f083b:0xc80b8f06e177fe62"
   },
   {
-    "name": "Niagara Falls",
+    "name": "Niagara Falls, New York",
     "lat": 43.0962,
     "lon": -79.0377,
     "url": "https://www.google.com/maps/place/Niagara+Falls/data=!4m2!3m1!1s0x89d3445eec824db9:0x46d2c56156bda288"
@@ -271,6 +322,27 @@ async function loadGallery() {
 }
 loadGallery();
 
+const placeList = document.getElementById('placeList');
+const placeLinks = places.map((place, i) => {
+  const a = document.createElement('a');
+  a.className = 'place-link';
+  a.href = place.url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.lat + ',' + place.lon)}`;
+  a.target = '_blank'; a.rel = 'noopener noreferrer';
+  const dot = document.createElement('span'); dot.className = 'place-dot';
+  const label = document.createElement('span'); label.textContent = place.name;
+  a.append(dot, label); placeList.appendChild(a);
+  a.addEventListener('mouseenter', () => setActivePlace(i, true));
+  a.addEventListener('mouseleave', () => setActivePlace(i, false));
+  a.addEventListener('focus', () => setActivePlace(i, true));
+  a.addEventListener('blur', () => setActivePlace(i, false));
+  return a;
+});
+const starNodes = [];
+function setActivePlace(i, on) {
+  if (starNodes[i]) starNodes[i].classList.toggle('is-active', on);
+  if (placeLinks[i]) placeLinks[i].classList.toggle('is-active', on);
+}
+if (!places.length) document.querySelector('.place-panel').style.display = 'none';
 const svg = d3.select('#countryMap');
 try {
   // US Atlas contains state borders. Only the 48 contiguous states are shown.
@@ -288,12 +360,17 @@ try {
     .attr('stroke-width',0.8).attr('stroke-opacity',0.75)
     .attr('vector-effect','non-scaling-stroke');
   const symbols = svg.append('g');
-  places.forEach(place => {
+  places.forEach((place, i) => {
     const point = projection([place.lon,place.lat]);
     if (!point || !Number.isFinite(point[0]) || !Number.isFinite(point[1])) return;
     const group=symbols.append('g').attr('transform',`translate(${point[0]},${point[1]})`);
     const star=group.append('path').attr('class','star').attr('d',d3.symbol().type(d3.symbolStar).size(115)()).attr('tabindex',0).attr('role','img').attr('aria-label',place.name);
     star.append('title').text(place.name);
+    starNodes[i] = star.node();
+    star.on('mouseenter', () => setActivePlace(i, true))
+        .on('mouseleave', () => setActivePlace(i, false))
+        .on('focus', () => setActivePlace(i, true))
+        .on('blur', () => setActivePlace(i, false));
     if (place.url) { star.style('cursor','pointer').on('click',()=>window.open(place.url,'_blank','noopener,noreferrer')); }
     // Place name appears on hover via the star tooltip.
   });
