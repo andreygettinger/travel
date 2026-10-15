@@ -40,7 +40,7 @@ footer{padding:24px clamp(20px,5vw,110px);border-top:1px solid var(--line);font-
 </main>
 <section class="about-gallery-section" aria-label="More photos of me">
 <div class="about-gallery" id="aboutGallery"></div>
-<p class="about-gallery-empty" id="aboutGalleryEmpty" hidden>Photos coming soon.</p>
+<p class="about-gallery-empty" id="aboutGalleryEmpty" hidden></p>
 </section>
 <div class="about-lightbox" id="aboutLightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
 <button class="lb-close" id="aboutClose" aria-label="Close photo">×</button>
@@ -50,32 +50,67 @@ footer{padding:24px clamp(20px,5vw,110px);border-top:1px solid var(--line);font-
 </div>
 <footer>Andrey — Photography</footer>
 <script>
-// Add photos named about-1.jpg, about-2.jpg, etc. to your images/ folder.
-// Change the filenames below if your photos have different names.
-const aboutPhotoFiles = ["images/about-1.jpg", "images/about-2.jpg", "images/about-3.jpg"];
-const gallery=document.getElementById('aboutGallery');
-const lightbox=document.getElementById('aboutLightbox');
-const lightboxImage=document.getElementById('aboutLightboxImage');
-const loadedPhotos=[];
-let currentPhoto=0;
-function showPhoto(i){
- if(!loadedPhotos.length)return;
- currentPhoto=(i+loadedPhotos.length)%loadedPhotos.length;
- lightboxImage.src=loadedPhotos[currentPhoto];
- lightbox.classList.add('open');
- document.body.style.overflow='hidden';
+// Load exactly three images; try common filename extensions and folder locations.
+const gallery = document.getElementById('aboutGallery');
+const empty = document.getElementById('aboutGalleryEmpty');
+const lightbox = document.getElementById('aboutLightbox');
+const lightboxImage = document.getElementById('aboutLightboxImage');
+const extensions = ['jpg','JPG','jpeg','JPEG','png','PNG','webp','WEBP'];
+const folders = ['images/','./images/','images/about/'];
+const loaded = [];
+let currentPhoto = 0;
+function candidates(n) {
+  return [...new Set(folders.flatMap(folder => extensions.map(ext => folder + 'about-' + n + '.' + ext)))];
 }
-function closePhoto(){lightbox.classList.remove('open');document.body.style.overflow='';}
-aboutPhotoFiles.forEach(src=>{
- const img=new Image();img.className='about-photo';img.alt='Photo of Andrey';img.loading='lazy';
- img.onload=()=>{loadedPhotos.push(src);loadedPhotos.sort((a,b)=>aboutPhotoFiles.indexOf(a)-aboutPhotoFiles.indexOf(b));gallery.appendChild(img);Array.from(gallery.children).sort((a,b)=>aboutPhotoFiles.indexOf(a.getAttribute('src'))-aboutPhotoFiles.indexOf(b.getAttribute('src'))).forEach(el=>gallery.appendChild(el));document.getElementById('aboutGalleryEmpty').hidden=true;};
- img.onerror=()=>{if(!loadedPhotos.length)document.getElementById('aboutGalleryEmpty').hidden=false;};
- img.onclick=()=>showPhoto(loadedPhotos.indexOf(src));img.src=src;
+function findImage(n) {
+  const paths = candidates(n);
+  return new Promise(resolve => {
+    let i = 0;
+    function next() {
+      if (i === paths.length) { resolve(null); return; }
+      const url = paths[i++];
+      const test = new Image();
+      test.onload = () => resolve(url);
+      test.onerror = next;
+      test.src = url;
+    }
+    next();
+  });
+}
+function showPhoto(index) {
+  if (!loaded.length) return;
+  currentPhoto = (index + loaded.length) % loaded.length;
+  lightboxImage.src = loaded[currentPhoto].src;
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePhoto() { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
+Promise.all([1,2,3].map(findImage)).then(paths => {
+  paths.forEach((path, i) => {
+    if (!path) return;
+    const img = document.createElement('img');
+    img.className = 'about-photo';
+    img.src = path;
+    img.alt = 'Photo of Andrey ' + (i+1);
+    img.loading = 'lazy';
+    img.addEventListener('click', () => showPhoto(loaded.indexOf(img)));
+    gallery.appendChild(img);
+    loaded.push(img);
+  });
+  if (loaded.length === 0) {
+    empty.hidden = false;
+    empty.textContent = 'Could not find about-1, about-2, or about-3 in the images folder. Check the exact filenames and upload the photos alongside this page.';
+  }
 });
-document.getElementById('aboutClose').onclick=closePhoto;
-document.getElementById('aboutPrev').onclick=()=>showPhoto(currentPhoto-1);
-document.getElementById('aboutNext').onclick=()=>showPhoto(currentPhoto+1);
-lightbox.addEventListener('click',e=>{if(e.target===lightbox)closePhoto()});
-document.addEventListener('keydown',e=>{if(!lightbox.classList.contains('open'))return;if(e.key==='Escape')closePhoto();if(e.key==='ArrowLeft')showPhoto(currentPhoto-1);if(e.key==='ArrowRight')showPhoto(currentPhoto+1)});
+document.getElementById('aboutClose').addEventListener('click', closePhoto);
+document.getElementById('aboutPrev').addEventListener('click', () => showPhoto(currentPhoto-1));
+document.getElementById('aboutNext').addEventListener('click', () => showPhoto(currentPhoto+1));
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closePhoto(); });
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape') closePhoto();
+  if (e.key === 'ArrowLeft') showPhoto(currentPhoto-1);
+  if (e.key === 'ArrowRight') showPhoto(currentPhoto+1);
+});
 </script>
 </body></html>
